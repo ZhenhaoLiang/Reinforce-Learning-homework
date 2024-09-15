@@ -12,7 +12,11 @@ class GridWorld():
     def __init__(self, env_size=args.env_size, 
                  start_state=args.start_state, 
                  target_state=args.target_state, 
-                 forbidden_states=args.forbidden_states):
+                 forbidden_states=args.forbidden_states,
+                 reward_target = args.reward_target,
+                 reward_forbidden = args.reward_forbidden,
+                 reward_step = args.reward_step
+                 ):
 
         self.env_size = env_size
         self.num_states = env_size[0] * env_size[1]
@@ -22,9 +26,9 @@ class GridWorld():
 
         self.agent_state = start_state
         self.action_space = args.action_space          
-        self.reward_target = args.reward_target
-        self.reward_forbidden = args.reward_forbidden
-        self.reward_step = args.reward_step
+        self.reward_target = reward_target
+        self.reward_forbidden = reward_forbidden
+        self.reward_step = reward_step
 
         self.canvas = None
         self.animation_interval = args.animation_interval
@@ -131,6 +135,7 @@ class GridWorld():
         self.traj_obj.set_data(traj_x, traj_y)
 
         plt.draw()
+        
         plt.pause(animation_interval)
         if args.debug:
             input('press Enter to continue...')     
@@ -158,3 +163,6 @@ class GridWorld():
             x = i % self.env_size[0]
             y = i // self.env_size[0]
             self.ax.text(x, y, str(value), ha='center', va='center', fontsize=10, color='black')
+
+    def save_fig(self,figname):
+        plt.savefig(f"../plots/{figname}.png")
