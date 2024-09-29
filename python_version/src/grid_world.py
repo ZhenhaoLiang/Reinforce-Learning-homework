@@ -146,6 +146,8 @@ class GridWorld():
         for state, state_action_group in enumerate(policy_matrix):    
             x = state % self.env_size[0]
             y = state // self.env_size[0]
+            if (x,y) in self.forbidden_states:
+                continue
             for i, action_probability in enumerate(state_action_group):
                 if action_probability !=0:
                     dx, dy = self.action_space[i]
@@ -162,6 +164,8 @@ class GridWorld():
         for i, value in enumerate(values):
             x = i % self.env_size[0]
             y = i // self.env_size[0]
+            if (x,y) in self.forbidden_states:
+                continue
             self.ax.text(x, y, str(value), ha='center', va='center', fontsize=10, color='black')
 
     def save_fig(self,figname):
