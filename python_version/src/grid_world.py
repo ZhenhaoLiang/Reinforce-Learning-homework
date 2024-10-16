@@ -25,7 +25,8 @@ class GridWorld():
         self.forbidden_states = forbidden_states
 
         self.agent_state = start_state
-        self.action_space = args.action_space          
+        self.action_space = args.action_space   
+    
         self.reward_target = reward_target
         self.reward_forbidden = reward_forbidden
         self.reward_step = reward_step
