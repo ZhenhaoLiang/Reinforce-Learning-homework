@@ -1,4 +1,4 @@
-
+import matplotlib.pyplot as plt
 import sys
 sys.path.append("..")
 from src.grid_world import GridWorld
@@ -36,7 +36,7 @@ def update_P(policy): #update martrix by policy
     P = np.delete(P, [6,9,14], axis=1)
 
     return P
-
+err = []
 if __name__ == "__main__":      
     discount=0.9
 
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     P = update_P(policy)
   
     state_value = np.zeros((16,1)) #initial values
-    for i in range(61): #iteration
+    for i in range(201): #iteration
         env = GridWorld(env_size = (4,4),start_state = (0,0),target_state = (2,2),
                     forbidden_states = [(2,1),(1,2),(2,3)],reward_target=1,
                     reward_forbidden=-1,reward_step=0)
@@ -66,7 +66,12 @@ if __name__ == "__main__":
         #state_value update
         P = update_P(policy)
         state_value = np.delete(state_value, [6,9,14])
-        state_value = 0.9*P@state_value + rpi
+        new_state_value = 0.9*P@state_value + rpi
+        if np.linalg.norm(state_value - new_state_value) < 0.001:
+            break
+        else:
+            err.append(np.linalg.norm(state_value - new_state_value))
+        state_value = new_state_value
         state_value = np.insert(state_value,6,0)
         state_value = np.insert(state_value,9,0)
         state_value = np.insert(state_value,14,0)
@@ -78,9 +83,16 @@ if __name__ == "__main__":
         env.add_policy(policy_matrix)
         env.add_state_values(state_value)
         env.save_fig(f"PolicyAndState_{i}")
-
-    next_state = state[0]      
-    print("Start optimal policy.")       
+    plt.figure()
+    plt.plot(err)
+    plt.xlabel('iteration times k')
+    plt.ylabel('$|v_{k+1}-v_k|$')
+    plt.show()
+    plt.savefig('err.png')
+    
+    
+    print("Start optimal policy.")  
+    next_state = state[0]        
     for t in range(10):
         env.render()
         action = env.action_space[policy[next_state[1]*4+next_state[0]]]
